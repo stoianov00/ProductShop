@@ -8,7 +8,14 @@ import springproject.productshop.domain.entity.User;
 import springproject.productshop.repository.UserRepository;
 import springproject.productshop.util.ValidatorUtil;
 
+import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ValidatorUtil validatorUtil;
@@ -25,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public void seedUsers(UserSeedDto[] userSeedDtos) {
         for (UserSeedDto userSeedDto : userSeedDtos) {
             if (!this.validatorUtil.isValid(userSeedDto)) {
-                this.validatorUtil.violations(userSeedDto.getClass())
+                this.validatorUtil.violations(userSeedDto)
                         .forEach(violation -> System.out.println(violation.getMessage()));
 
                 continue;
@@ -34,5 +41,26 @@ public class UserServiceImpl implements UserService {
             User user = this.modelMapper.map(userSeedDto, User.class);
             this.userRepository.saveAndFlush(user);
         }
+
+    }
+
+    @Override
+    public void seedFriends() {
+        List<User> users = this.userRepository.findAll();
+
+        for (User user : users) {
+            user.setFriends(this.getRandomFriends());
+        }
+    }
+
+    @Override
+    public Set<User> getRandomFriends() {
+        Random random = new Random();
+        int id = random.nextInt((int) ((this.userRepository.count()) + 1) - 1);
+
+        Set<User> friends = new HashSet<>();
+        friends.add(this.userRepository.findById(id).orElse(null));
+
+        return friends;
     }
 }
