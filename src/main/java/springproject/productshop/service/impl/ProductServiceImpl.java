@@ -12,10 +12,12 @@ import springproject.productshop.repository.UserRepository;
 import springproject.productshop.service.ProductService;
 import springproject.productshop.util.ValidatorUtil;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -36,10 +38,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void seedProducts(ProductSeedDto[] productSeedDtos) {
-        for (ProductSeedDto productSeedDto : productSeedDtos) {
-            productSeedDto.setSeller(this.getRandomSeller());
-            productSeedDto.setBuyer(this.getRandomBuyer());
+        List<Category> categories = this.categoryRepository.findAll();
 
+        for (ProductSeedDto productSeedDto : productSeedDtos) {
             if (!this.validatorUtil.isValid(productSeedDto)) {
                 this.validatorUtil.violations(productSeedDto)
                         .forEach(violation -> System.out.println(violation.getMessage()));
@@ -48,10 +49,14 @@ public class ProductServiceImpl implements ProductService {
             }
 
             Product product = this.modelMapper.map(productSeedDto, Product.class);
+            product.setSeller(this.getRandomSeller());
+            product.setBuyer(this.getRandomBuyer());
+
+            this.getRandomCategories(categories, product);
             this.productRepository.saveAndFlush(product);
         }
 
-//        this.categoryRepository.saveAll(this.getRandomCategories());
+        this.categoryRepository.saveAll(categories);
     }
 
     private User getRandomSeller() {
@@ -62,24 +67,19 @@ public class ProductServiceImpl implements ProductService {
 
     private User getRandomBuyer() {
         int id = this.random.nextInt((int) ((this.userRepository.count()) + 1) - 1);
-        if (id % 4 == 0) {
+        if (id % 4 == 0) { // leave some buyers null
             return null;
         }
 
         return this.userRepository.findById(id).orElse(null);
     }
 
-    private List<Category> getRandomCategories(Product product) {
-        List<Category> categories = this.categoryRepository.findAll();
-
+    private void getRandomCategories(List<Category> categories, Product product) {
         int id = this.random.nextInt((int) ((this.categoryRepository.count()) + 1) - 1);
         for (int i = 0; i < id; i++) {
-            Category category = categories.get(random.nextInt(i));
+            Category category = categories.get(i);
             category.getProducts().add(product);
         }
-
-        return categories;
     }
-
 
 }

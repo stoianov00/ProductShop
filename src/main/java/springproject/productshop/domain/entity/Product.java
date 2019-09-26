@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -19,7 +19,7 @@ public class Product extends BaseEntity {
     private BigDecimal price;
 
     @ManyToMany(targetEntity = Category.class, mappedBy = "products", cascade = CascadeType.ALL)
-    private Set<Category> categories;
+    private List<Category> categories;
 
     @OneToOne(targetEntity = User.class)
     @JoinColumn(name = "seller_id", referencedColumnName = "id")
