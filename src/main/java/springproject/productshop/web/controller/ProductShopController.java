@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
+import springproject.productshop.domain.dto.export.ProductRangeDto;
 import springproject.productshop.domain.dto.seed.CategorySeedDto;
 import springproject.productshop.domain.dto.seed.ProductSeedDto;
 import springproject.productshop.domain.dto.seed.UserSeedDto;
@@ -14,6 +15,8 @@ import springproject.productshop.util.FileUtil;
 import springproject.productshop.util.impl.FilePath;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 public class ProductShopController implements CommandLineRunner {
@@ -34,9 +37,10 @@ public class ProductShopController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        this.seedUsers();
-        this.seedCategories();
-        this.seedProducts();
+//        this.seedUsers();
+//        this.seedCategories();
+//        this.seedProducts();
+        this.productsInRange();
     }
 
     private void seedUsers() throws IOException {
@@ -61,4 +65,11 @@ public class ProductShopController implements CommandLineRunner {
         this.productService.seedProducts(productSeedDtos);
     }
 
+    // EXPORT JSON
+    private void productsInRange() throws IOException {
+        List<ProductRangeDto> products = this.productService.productsInRange(BigDecimal.valueOf(500), BigDecimal.valueOf(1000));
+        String productInRangeJson = this.gson.toJson(products);
+
+        this.fileUtil.exportJsonFile(FilePath.PRODUCTS_IN_RANGE_FILE_PATH, productInRangeJson);
+    }
 }

@@ -2,6 +2,7 @@ package springproject.productshop.service.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import springproject.productshop.domain.dto.export.ProductRangeDto;
 import springproject.productshop.domain.dto.seed.ProductSeedDto;
 import springproject.productshop.domain.entity.Category;
 import springproject.productshop.domain.entity.Product;
@@ -13,6 +14,8 @@ import springproject.productshop.service.ProductService;
 import springproject.productshop.util.ValidatorUtil;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -80,6 +83,22 @@ public class ProductServiceImpl implements ProductService {
             Category category = categories.get(i);
             category.getProducts().add(product);
         }
+    }
+
+    // EXPORT JSON
+    @Override
+    public List<ProductRangeDto> productsInRange(BigDecimal minPrice, BigDecimal maxPrice) {
+        List<Product> products = this.productRepository.findAllByPriceBetweenAndBuyerIsNullOrderByPriceAsc(minPrice, maxPrice);
+
+        List<ProductRangeDto> productRangeDtos = new ArrayList<>();
+        for (Product product : products) {
+            ProductRangeDto productRangeDto = this.modelMapper.map(product, ProductRangeDto.class);
+            productRangeDto.setSeller(String.format("%s %s", product.getSeller().getFirstName(), product.getSeller().getLastName()));
+
+            productRangeDtos.add(productRangeDto);
+        }
+
+        return productRangeDtos;
     }
 
 }
