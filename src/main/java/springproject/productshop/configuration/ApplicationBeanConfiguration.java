@@ -10,6 +10,7 @@ import springproject.productshop.util.impl.ValidatorUtilImpl;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.util.Random;
 
 @Configuration
 public class ApplicationBeanConfiguration {
@@ -39,6 +40,11 @@ public class ApplicationBeanConfiguration {
     @Bean
     public ValidatorUtilImpl validatorUtil() {
         return new ValidatorUtilImpl(this.validator());
+    }
+
+    @Bean
+    public Random random() {
+        return new Random();
     }
 
 }

@@ -3,12 +3,15 @@ package springproject.productshop.domain.dto.seed;
 import com.google.gson.annotations.Expose;
 import lombok.Getter;
 import lombok.Setter;
+import springproject.productshop.domain.entity.Category;
+import springproject.productshop.domain.entity.User;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,11 +26,14 @@ public class ProductSeedDto implements Serializable {
     @Min(value = 0, message = "Price cannot be negative number")
     private BigDecimal price;
 
-//    @Expose
-//    private User seller;
-//
-//    @Expose
-//    private User buyer;
+    @Expose
+    private User seller;
+
+    @Expose
+    private User buyer;
+
+    @Expose
+    private List<Category> categories;
 
     public ProductSeedDto() {
     }
