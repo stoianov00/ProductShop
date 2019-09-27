@@ -3,13 +3,19 @@ package springproject.productshop.service.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import springproject.productshop.domain.dto.export.CategoryDto;
 import springproject.productshop.domain.dto.seed.CategorySeedDto;
 import springproject.productshop.domain.entity.Category;
 import springproject.productshop.repository.CategoryRepository;
 import springproject.productshop.service.CategoryService;
 import springproject.productshop.util.ValidatorUtil;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ValidatorUtil validatorUtil;
@@ -35,6 +41,21 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = this.modelMapper.map(categorySeedDto, Category.class);
             this.categoryRepository.saveAndFlush(category);
         }
+    }
 
+    // EXPORT JSON
+    @Override
+    public List<CategoryDto> categories() {
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+
+        List<Category> categories = this.categoryRepository.findAllByOrderByNameDesc();
+        for (Category category : categories) {
+            CategoryDto categoryDto = this.modelMapper.map(categories, CategoryDto.class);
+            categoryDto.setName(category.getName());
+
+            categoryDtos.add(categoryDto);
+        }
+
+        return categoryDtos;
     }
 }

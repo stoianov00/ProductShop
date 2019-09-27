@@ -88,9 +88,9 @@ public class ProductServiceImpl implements ProductService {
     // EXPORT JSON
     @Override
     public List<ProductRangeDto> productsInRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        List<Product> products = this.productRepository.findAllByPriceBetweenAndBuyerIsNullOrderByPriceAsc(minPrice, maxPrice);
-
         List<ProductRangeDto> productRangeDtos = new ArrayList<>();
+
+        List<Product> products = this.productRepository.findAllByPriceBetweenAndBuyerIsNullOrderByPriceAsc(minPrice, maxPrice);
         for (Product product : products) {
             ProductRangeDto productRangeDto = this.modelMapper.map(product, ProductRangeDto.class);
             productRangeDto.setSeller(String.format("%s %s", product.getSeller().getFirstName(), product.getSeller().getLastName()));
@@ -100,5 +100,6 @@ public class ProductServiceImpl implements ProductService {
 
         return productRangeDtos;
     }
+
 
 }
