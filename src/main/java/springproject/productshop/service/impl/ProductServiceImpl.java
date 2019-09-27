@@ -3,6 +3,7 @@ package springproject.productshop.service.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import springproject.productshop.domain.dto.export.ProductRangeDto;
+import springproject.productshop.domain.dto.export.SoldProductDto;
 import springproject.productshop.domain.dto.seed.ProductSeedDto;
 import springproject.productshop.domain.entity.Category;
 import springproject.productshop.domain.entity.Product;
@@ -101,5 +102,27 @@ public class ProductServiceImpl implements ProductService {
         return productRangeDtos;
     }
 
+    @Override
+    public List<SoldProductDto> soldProducts() {
+        List<SoldProductDto> soldProductDtos = new ArrayList<>();
 
+        List<Product> products = this.productRepository.findAllByBuyerNotNullAndSellerNotNull();
+        for (Product product : products) {
+            SoldProductDto soldProduct = this.modelMapper.map(product, SoldProductDto.class);
+
+            soldProduct.setSeller(String.format("%s %s", product.getSeller().getFirstName(), product.getSeller().getLastName()));
+            soldProduct.setName(product.getName());
+            soldProduct.setPrice(product.getPrice());
+            soldProduct.setBuyer(String.format("%s %s", product.getBuyer().getFirstName(), product.getBuyer().getLastName()));
+
+            if (product.getSeller().getFirstName() == null || product.getSeller().getLastName() == null
+                    || product.getBuyer().getFirstName() == null || product.getBuyer().getLastName() == null) {
+                continue;
+            }
+
+            soldProductDtos.add(soldProduct);
+        }
+
+        return soldProductDtos;
+    }
 }

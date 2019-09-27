@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
 import springproject.productshop.domain.dto.export.CategoryDto;
 import springproject.productshop.domain.dto.export.ProductRangeDto;
+import springproject.productshop.domain.dto.export.SoldProductDto;
 import springproject.productshop.domain.dto.seed.CategorySeedDto;
 import springproject.productshop.domain.dto.seed.ProductSeedDto;
 import springproject.productshop.domain.dto.seed.UserSeedDto;
@@ -38,11 +39,12 @@ public class ProductShopController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        this.seedUsers();
-//        this.seedCategories();
-//        this.seedProducts();
-//        this.productsInRange();
-        this.categoriesOrderedByName();
+        // this.seedUsers();
+        // this.seedCategories();
+        // this.seedProducts();
+        // this.productsInRange();
+        // this.categoriesOrderedByName();
+        // this.soldProducts();
     }
 
     private void seedUsers() throws IOException {
@@ -80,6 +82,13 @@ public class ProductShopController implements CommandLineRunner {
         String categoriesJson = this.gson.toJson(categories);
 
         this.fileUtil.exportJsonFile(FilePath.CATEGORIES_ORDERED_BY_NAME_FILE_PATH, categoriesJson);
+    }
+
+    private void soldProducts() throws IOException {
+        List<SoldProductDto> soldProductDtos = this.productService.soldProducts();
+        String soldProductsJson = this.gson.toJson(soldProductDtos);
+
+        this.fileUtil.exportJsonFile(FilePath.SOLD_PRODUCT_FILE_PATH, soldProductsJson);
     }
 
 
