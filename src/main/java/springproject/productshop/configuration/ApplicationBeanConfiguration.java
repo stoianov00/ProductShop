@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springproject.productshop.util.FileUtil;
+import springproject.productshop.util.ValidatorUtil;
 import springproject.productshop.util.impl.FileUtilImpl;
 import springproject.productshop.util.impl.ValidatorUtilImpl;
 
@@ -28,7 +30,7 @@ public class ApplicationBeanConfiguration {
     }
 
     @Bean
-    public FileUtilImpl fileUtil() {
+    public FileUtil fileUtil() {
         return new FileUtilImpl();
     }
 
@@ -38,7 +40,7 @@ public class ApplicationBeanConfiguration {
     }
 
     @Bean
-    public ValidatorUtilImpl validatorUtil() {
+    public ValidatorUtil validatorUtil() {
         return new ValidatorUtilImpl(this.validator());
     }
 

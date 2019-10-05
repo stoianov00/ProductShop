@@ -44,7 +44,7 @@ public class ProductShopController implements CommandLineRunner {
         // this.seedProducts();
         // this.productsInRange();
         // this.categoriesOrderedByName();
-        // this.soldProducts();
+        this.soldProducts();
     }
 
     private void seedUsers() throws IOException {
@@ -90,6 +90,5 @@ public class ProductShopController implements CommandLineRunner {
 
         this.fileUtil.exportJsonFile(FilePath.SOLD_PRODUCT_FILE_PATH, soldProductsJson);
     }
-
 
 }
